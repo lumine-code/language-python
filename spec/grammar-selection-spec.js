@@ -13,7 +13,7 @@ describe("Python grammar selection", () => {
     for (const name of ["main.py", "types.pyi", "gui.pyw"]) {
       const grammar = atom.grammars.selectGrammar(name, "");
       expect(grammar.scopeName).toBe("source.python");
-      expect(grammar.constructor.name).toBe("WASMTreeSitterGrammar");
+      expect(grammar.constructor.name).toBe("TreeSitterGrammar");
     }
   });
 
@@ -22,18 +22,18 @@ describe("Python grammar selection", () => {
     const grammar = atom.grammars.selectGrammar("main.ipy", "");
     expect(grammar.name).toBe("IPython");
     expect(grammar.scopeName).toBe("source.python.ipy");
-    expect(grammar.constructor.name).toBe("WASMTreeSitterGrammar");
+    expect(grammar.constructor.name).toBe("TreeSitterGrammar");
   });
 
   it("falls back to the TextMate grammars when tree-sitter is disabled", () => {
     atom.config.set("language.useTreeSitterParsers", false);
     const python = atom.grammars.selectGrammar("main.py", "");
     expect(python.scopeName).toBe("source.python");
-    expect(python.constructor.name).not.toBe("WASMTreeSitterGrammar");
+    expect(python.constructor.name).not.toBe("TreeSitterGrammar");
 
     const ipython = atom.grammars.selectGrammar("main.ipy", "");
     expect(ipython.name).toBe("IPython");
     expect(ipython.scopeName).toBe("source.python.ipy");
-    expect(ipython.constructor.name).not.toBe("WASMTreeSitterGrammar");
+    expect(ipython.constructor.name).not.toBe("TreeSitterGrammar");
   });
 });

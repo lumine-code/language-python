@@ -1,7 +1,7 @@
 {
   "name": "Python",
   "scopeName": "source.python",
-  "type": "modern-tree-sitter",
+  "type": "tree-sitter",
   "parser": "tree-sitter-python",
   "injectionRegex": "^(py|PY|python|PYTHON)$",
   "firstLineRegex": [

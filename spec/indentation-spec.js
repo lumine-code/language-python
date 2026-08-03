@@ -1,6 +1,6 @@
 const dedent = require("dedent");
 
-describe("Python indentation (modern Tree-sitter)", () => {
+describe("Python indentation (Tree-sitter)", () => {
   let editor;
   let languageMode;
   let grammar;

@@ -3,7 +3,7 @@ const { Point } = require("atom");
 // The IPython grammar (source.python.ipy) is backed by the lumine-code fork of
 // tree-sitter-python, which adds statement-level rules for IPython-only syntax
 // so .ipy sources parse without ERROR nodes corrupting their neighbors.
-describe("IPython grammar (modern Tree-sitter)", () => {
+describe("IPython grammar (Tree-sitter)", () => {
   let editor;
   let languageMode;
 
@@ -91,7 +91,7 @@ describe("IPython grammar (TextMate)", () => {
   it("is the TextMate grammar when tree-sitter is disabled", () => {
     expect(grammar).toBeDefined();
     expect(grammar.name).toBe("IPython");
-    expect(grammar.constructor.name).not.toBe("WASMTreeSitterGrammar");
+    expect(grammar.constructor.name).not.toBe("TreeSitterGrammar");
   });
 
   it("tokenizes IPython statements with the dedicated scopes", () => {
