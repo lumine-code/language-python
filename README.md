@@ -9,6 +9,10 @@ Python language support.
 - **IPython support**: dedicated Tree-sitter and TextMate grammars for `.ipy` files that parse IPython-only statements — magics (`%m`, `%%m`), shell escapes (`!cmd`), and help requests (`?obj`, `obj?`) — without syntax errors.
 - **Snippets**: shortcuts for common Python constructs.
 
+## Installation
+
+To install `language-python` search for _language-python_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/language-python`.
+
 ## Services
 
 - **hyperlink.injection** (`^1.0.0`): consumed to highlight URLs inside Python files as clickable links.
