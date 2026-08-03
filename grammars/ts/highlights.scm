@@ -455,7 +455,7 @@
   ":" @punctuation.definition.function.colon.python
   (#set! capture.final true))
 
-(dictionary (pair ":" @puncutation.separator.key-value.python))
+(dictionary (pair ":" @punctuation.separator.key-value.python))
 
 (typed_parameter ":" @punctuation.separator.type-annotation.python)
 (typed_default_parameter ":" @punctuation.separator.type-annotation.python)
