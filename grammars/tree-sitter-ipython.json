@@ -14,11 +14,11 @@
   ],
   "fileTypes": ["ipy"],
   "treeSitter": {
-    // The lumine-code fork extends upstream v0.25.0 with IPython-only
-    // statements (magic_statement, shell_statement, help_statement) so .ipy
-    // sources parse without ERROR nodes. Plain .py files stay on the pure
-    // upstream parser above.
-    "parserSource": "github:lumine-code/tree-sitter-python#4f29d4375ee1977a53b2bed87540a62598e88200",
+    // The lumine-code fork extends upstream with IPython-only statements
+    // (magic_statement, shell_statement, help_statement) so .ipy sources parse
+    // without ERROR nodes. Plain .py files stay on the pure upstream parser
+    // above, which this fork is merged up to, so both agree on tree shape.
+    "parserSource": "github:lumine-code/tree-sitter-python#9bb0989dd8016fc52aa6c0c51cc20ed56ba19320",
     "wasmBuildTool": "tree-sitter-cli#v0.26.11",
     "grammar": "ts/tree-sitter-ipython.wasm",
     "highlightsQuery": ["ts/highlights.scm", "ts/ipython-highlights.scm"],

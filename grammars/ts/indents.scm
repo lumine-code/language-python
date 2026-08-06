@@ -127,10 +127,8 @@
   "try"
   ":" @indent
   (block
-    (expression_statement
-      (identifier) @dedent
-      (#match? @dedent "except")
-    )
+    (identifier) @dedent
+    (#match? @dedent "except")
   )
 )
 

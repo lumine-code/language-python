@@ -23,8 +23,13 @@
     "wsgi"
   ],
   "treeSitter": {
-    "parserSource": "github:tree-sitter/tree-sitter-python#v0.25.0",
-    "wasmBuildTool": "tree-sitter-cli#v0.26.10",
+    // One commit past v0.25.0, and still untagged upstream: it makes
+    // `expression_statement` a supertype, so that node no longer appears in
+    // the tree and a bare `a, b` becomes `tuple_expression`. The IPython
+    // grammar below shares every query file with this one, so the two parsers
+    // have to agree on tree shape - they move together or not at all.
+    "parserSource": "github:tree-sitter/tree-sitter-python#26855eabccb19c6abf499fbc5b8dc7cc9ab8bc64",
+    "wasmBuildTool": "tree-sitter-cli#v0.26.11",
     "grammar": "ts/tree-sitter-python.wasm",
     "highlightsQuery": "ts/highlights.scm",
     "tagsQuery": "ts/tags.scm",
