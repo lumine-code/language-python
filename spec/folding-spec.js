@@ -22,12 +22,12 @@ describe("Python folding (Tree-sitter)", () => {
   }
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("language.useTreeSitterParsers", true);
 
-    editor = await atom.workspace.open();
+    editor = await lumine.workspace.open();
     editor.displayLayer.reset({ foldCharacter: "…" });
-    await atom.packages.activatePackage("language-python");
-    grammar = atom.grammars.grammarForScopeName("source.python");
+    await lumine.packages.activatePackage("language-python");
+    grammar = lumine.grammars.grammarForScopeName("source.python");
     editor.setGrammar(grammar);
     languageMode = editor.languageMode;
     await languageMode.ready;

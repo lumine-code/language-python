@@ -10,8 +10,8 @@ const GRAMMAR_TEST_FILES = [
 
 describe("Grammar tests", () => {
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", true);
-    await atom.packages.activatePackage("language-python");
+    lumine.config.set("language.useTreeSitterParsers", true);
+    await lumine.packages.activatePackage("language-python");
   });
 
   it("passes grammar tests", async () => {

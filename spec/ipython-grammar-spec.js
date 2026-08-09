@@ -1,4 +1,4 @@
-const { Point } = require("atom");
+const { Point } = require("lumine");
 
 // The IPython grammar (source.python.ipy) is backed by the lumine-code fork of
 // tree-sitter-python, which adds statement-level rules for IPython-only syntax
@@ -8,18 +8,18 @@ describe("IPython grammar (Tree-sitter)", () => {
   let languageMode;
 
   const setUp = async (text) => {
-    editor = await atom.workspace.open();
+    editor = await lumine.workspace.open();
     const buffer = editor.getBuffer();
     buffer.setText(text);
-    atom.grammars.assignLanguageMode(buffer, "source.python.ipy");
+    lumine.grammars.assignLanguageMode(buffer, "source.python.ipy");
     languageMode = buffer.getLanguageMode();
     await languageMode.ready;
     for (let i = 0; i < 25; i++) await Promise.resolve();
   };
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", true);
-    await atom.packages.activatePackage("language-python");
+    lumine.config.set("language.useTreeSitterParsers", true);
+    await lumine.packages.activatePackage("language-python");
   });
 
   it("parses magics, shell escapes, and help requests without errors", async () => {
@@ -79,13 +79,13 @@ describe("IPython grammar (TextMate)", () => {
   let grammar;
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", false);
-    await atom.packages.activatePackage("language-python");
-    grammar = atom.grammars.grammarForScopeName("source.python.ipy");
+    lumine.config.set("language.useTreeSitterParsers", false);
+    await lumine.packages.activatePackage("language-python");
+    grammar = lumine.grammars.grammarForScopeName("source.python.ipy");
   });
 
   afterEach(() => {
-    atom.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("language.useTreeSitterParsers", true);
   });
 
   it("is the TextMate grammar when tree-sitter is disabled", () => {

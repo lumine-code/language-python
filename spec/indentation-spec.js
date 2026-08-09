@@ -24,11 +24,11 @@ describe("Python indentation (Tree-sitter)", () => {
   }
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("language.useTreeSitterParsers", true);
 
-    editor = await atom.workspace.open();
-    await atom.packages.activatePackage("language-python");
-    grammar = atom.grammars.grammarForScopeName("source.python");
+    editor = await lumine.workspace.open();
+    await lumine.packages.activatePackage("language-python");
+    grammar = lumine.grammars.grammarForScopeName("source.python");
     editor.setGrammar(grammar);
     languageMode = editor.languageMode;
     await languageMode.ready;

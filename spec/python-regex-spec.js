@@ -2,9 +2,9 @@ describe("Python regular expression grammar", () => {
   let grammar = null;
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", false);
-    await atom.packages.activatePackage("language-python");
-    grammar = atom.grammars.grammarForScopeName("source.regexp.python");
+    lumine.config.set("language.useTreeSitterParsers", false);
+    await lumine.packages.activatePackage("language-python");
+    grammar = lumine.grammars.grammarForScopeName("source.regexp.python");
   });
 
   describe("character classes", () => {

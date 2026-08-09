@@ -4,10 +4,10 @@ describe("Python settings", () => {
   afterEach(() => editor.destroy());
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", false);
-    editor = await atom.workspace.open();
+    lumine.config.set("language.useTreeSitterParsers", false);
+    editor = await lumine.workspace.open();
     languageMode = editor.languageMode;
-    await atom.packages.activatePackage("language-python");
+    await lumine.packages.activatePackage("language-python");
   });
 
   it("matches lines correctly using the increaseIndentPattern", () => {

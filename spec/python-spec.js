@@ -2,9 +2,9 @@ describe("Python grammar", () => {
   let grammar = null;
 
   beforeEach(async () => {
-    atom.config.set("language.useTreeSitterParsers", false);
-    await atom.packages.activatePackage("language-python");
-    grammar = atom.grammars.grammarForScopeName("source.python");
+    lumine.config.set("language.useTreeSitterParsers", false);
+    await lumine.packages.activatePackage("language-python");
+    grammar = lumine.grammars.grammarForScopeName("source.python");
   });
 
   it("recognises shebang on firstline", () => {
@@ -2273,7 +2273,7 @@ describe("Python grammar", () => {
 
   describe("SQL highlighting", () => {
     beforeEach(async () => {
-      await atom.packages.activatePackage("language-sql");
+      await lumine.packages.activatePackage("language-sql");
     });
 
     it("tokenizes SQL inline highlighting on blocks", () => {
