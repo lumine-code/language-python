@@ -19,7 +19,7 @@
     // without ERROR nodes. Plain .py files stay on the pure upstream parser
     // above, which this fork is merged up to, so both agree on tree shape.
     "parserSource": "github:lumine-code/tree-sitter-python#ff6556893780d54bfbc3360a43375949aa4c4d3e",
-    "wasmBuildTool": "tree-sitter-cli#v0.26.10",
+    "wasmBuildTool": "tree-sitter-cli#v0.26.13",
     "grammar": "ts/tree-sitter-ipython.wasm",
     "highlightsQuery": ["ts/highlights.scm", "ts/ipython-highlights.scm"],
     "tagsQuery": "ts/tags.scm",
