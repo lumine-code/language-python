@@ -24,7 +24,7 @@ describe("Python indentation (Tree-sitter)", () => {
   }
 
   beforeEach(async () => {
-    lumine.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("editor.useTreeSitterParsers", true);
 
     editor = await lumine.workspace.open();
     await lumine.packages.activatePackage("language-python");

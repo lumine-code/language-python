@@ -9,7 +9,7 @@ describe("Python grammar selection", () => {
   });
 
   it("selects the tree-sitter grammar for python file types when enabled", () => {
-    lumine.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("editor.useTreeSitterParsers", true);
     for (const name of ["main.py", "types.pyi", "gui.pyw"]) {
       const grammar = lumine.grammars.selectGrammar(name, "");
       expect(grammar.scopeName).toBe("source.python");
@@ -18,7 +18,7 @@ describe("Python grammar selection", () => {
   });
 
   it("selects the IPython tree-sitter grammar for .ipy files when enabled", () => {
-    lumine.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("editor.useTreeSitterParsers", true);
     const grammar = lumine.grammars.selectGrammar("main.ipy", "");
     expect(grammar.name).toBe("IPython");
     expect(grammar.scopeName).toBe("source.python.ipy");
@@ -26,7 +26,7 @@ describe("Python grammar selection", () => {
   });
 
   it("falls back to the TextMate grammars when tree-sitter is disabled", () => {
-    lumine.config.set("language.useTreeSitterParsers", false);
+    lumine.config.set("editor.useTreeSitterParsers", false);
     const python = lumine.grammars.selectGrammar("main.py", "");
     expect(python.scopeName).toBe("source.python");
     expect(python.constructor.name).not.toBe("TreeSitterGrammar");

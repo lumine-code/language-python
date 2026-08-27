@@ -1,16 +1,16 @@
 {
   ".source.python": {
-    "language": {
-      "autoIndentOnPaste": false,
-      "softTabs": true,
-      "tabLength": 4,
+    "editor": {
       "commentStart": "# ",
       "commentDelimiters": {
         "line": "#"
       },
       "foldEndPattern": "^\\s*[}\\])]",
       "increaseIndentPattern": "^\\s*(class|def|elif|else|except|finally|for|if|try|with|while|async\\s+(def|for|with))\\b.*:\\s*$",
-      "decreaseIndentPattern": "^\\s*(elif|else|except|finally)\\b.*:\\s*$"
+      "decreaseIndentPattern": "^\\s*(elif|else|except|finally)\\b.*:\\s*$",
+      "autoIndentOnPaste": false,
+      "softTabs": true,
+      "tabLength": 4
     }
   }
 }

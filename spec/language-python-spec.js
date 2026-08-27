@@ -4,7 +4,7 @@ describe("Python settings", () => {
   afterEach(() => editor.destroy());
 
   beforeEach(async () => {
-    lumine.config.set("language.useTreeSitterParsers", false);
+    lumine.config.set("editor.useTreeSitterParsers", false);
     editor = await lumine.workspace.open();
     languageMode = editor.languageMode;
     await lumine.packages.activatePackage("language-python");

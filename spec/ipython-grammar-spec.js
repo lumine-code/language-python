@@ -18,7 +18,7 @@ describe("IPython grammar (Tree-sitter)", () => {
   };
 
   beforeEach(async () => {
-    lumine.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("editor.useTreeSitterParsers", true);
     await lumine.packages.activatePackage("language-python");
   });
 
@@ -79,13 +79,13 @@ describe("IPython grammar (TextMate)", () => {
   let grammar;
 
   beforeEach(async () => {
-    lumine.config.set("language.useTreeSitterParsers", false);
+    lumine.config.set("editor.useTreeSitterParsers", false);
     await lumine.packages.activatePackage("language-python");
     grammar = lumine.grammars.grammarForScopeName("source.python.ipy");
   });
 
   afterEach(() => {
-    lumine.config.set("language.useTreeSitterParsers", true);
+    lumine.config.set("editor.useTreeSitterParsers", true);
   });
 
   it("is the TextMate grammar when tree-sitter is disabled", () => {
