@@ -176,8 +176,9 @@
 ; DICTIONARIES
 ; ============
 
-(pair
+((pair
   key: (identifier) @entity.other.attribute-name.python)
+  (#is? test.typeAt "parent.parent dictionary"))
 
 ; STRINGS
 ; =======
@@ -463,7 +464,8 @@
   ":" @punctuation.definition.function.colon.python
   (#set! capture.final true))
 
-(pair ":" @punctuation.separator.key-value.python)
+((pair ":" @punctuation.separator.key-value.python)
+  (#is? test.typeAt "parent.parent dictionary"))
 
 (typed_parameter ":" @punctuation.separator.type-annotation.python)
 (typed_default_parameter ":" @punctuation.separator.type-annotation.python)
