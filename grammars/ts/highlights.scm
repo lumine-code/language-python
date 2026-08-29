@@ -176,9 +176,8 @@
 ; DICTIONARIES
 ; ============
 
-(dictionary
-  (pair
-    key: (identifier) @entity.other.attribute-name.python))
+(pair
+  key: (identifier) @entity.other.attribute-name.python)
 
 ; STRINGS
 ; =======
@@ -437,17 +436,26 @@
 ; PUNCTUATION
 ; ===========
 
-(subscript
-  "[" @punctuation.definition.subscript.begin.bracket.square.python
-  "]" @punctuation.definition.subscript.end.bracket.square.python)
+("[" @punctuation.definition.subscript.begin.bracket.square.python
+  (#is? test.childOfType subscript)
+  (#is? test.first true))
+("]" @punctuation.definition.subscript.end.bracket.square.python
+  (#is? test.childOfType subscript)
+  (#is? test.last true))
 
-(list
-  "[" @punctuation.definition.list.begin.bracket.square.python
-  "]" @punctuation.definition.list.end.bracket.square.python)
+("[" @punctuation.definition.list.begin.bracket.square.python
+  (#is? test.childOfType list)
+  (#is? test.first true))
+("]" @punctuation.definition.list.end.bracket.square.python
+  (#is? test.childOfType list)
+  (#is? test.last true))
 
-(type_parameter
-  "[" @punctuation.definition.list.begin.bracket.square.python
-  "]" @punctuation.definition.list.end.bracket.square.python)
+("[" @punctuation.definition.list.begin.bracket.square.python
+  (#is? test.childOfType type_parameter)
+  (#is? test.first true))
+("]" @punctuation.definition.list.end.bracket.square.python
+  (#is? test.childOfType type_parameter)
+  (#is? test.last true))
 
 (slice ":" @punctuation.separator.slice.colon.python)
 
@@ -455,51 +463,64 @@
   ":" @punctuation.definition.function.colon.python
   (#set! capture.final true))
 
-(dictionary (pair ":" @punctuation.separator.key-value.python))
+(pair ":" @punctuation.separator.key-value.python)
 
 (typed_parameter ":" @punctuation.separator.type-annotation.python)
 (typed_default_parameter ":" @punctuation.separator.type-annotation.python)
 
-(parameters
-  "(" @punctuation.definition.parameters.begin.bracket.round.python
-  ")" @punctuation.definition.parameters.end.bracket.round.python
+("(" @punctuation.definition.parameters.begin.bracket.round.python
+  (#is? test.childOfType parameters)
+  (#is? test.first true)
+  (#set! capture.final true))
+(")" @punctuation.definition.parameters.end.bracket.round.python
+  (#is? test.childOfType parameters)
+  (#is? test.last true)
   (#set! capture.final true))
 
-(parameters
-  "," @punctuation.separator.parameters.comma.python
+(("," @punctuation.separator.parameters.comma.python)
+  (#is? test.childOfType "parameters lambda_parameters")
   (#set! capture.final true))
 
-(lambda_parameters
-  "," @punctuation.separator.parameters.comma.python
+("," @punctuation.separator.destructuring.comma.python
+  (#is? test.childOfType pattern_list))
+
+("(" @punctuation.definition.arguments.begin.bracket.round.python
+  (#is? test.childOfType argument_list)
+  (#is? test.first true)
+  (#set! capture.final true))
+(")" @punctuation.definition.arguments.end.bracket.round.python
+  (#is? test.childOfType argument_list)
+  (#is? test.last true)
   (#set! capture.final true))
 
-(pattern_list "," @punctuation.separator.destructuring.comma.python)
-
-(argument_list
-  "(" @punctuation.definition.arguments.begin.bracket.round.python
-  ")" @punctuation.definition.arguments.end.bracket.round.python
+("," @punctuation.separator.arguments.comma.python
+  (#is? test.childOfType argument_list)
   (#set! capture.final true))
 
-(argument_list
-  "," @punctuation.separator.arguments.comma.python
+("(" @punctuation.definition.tuple.begin.bracket.round.python
+  (#is? test.childOfType tuple)
+  (#is? test.first true)
+  (#set! capture.final true))
+(")" @punctuation.definition.tuple.end.bracket.round.python
+  (#is? test.childOfType tuple)
+  (#is? test.last true)
   (#set! capture.final true))
 
-(tuple
-  "(" @punctuation.definition.tuple.begin.bracket.round.python
-  ")" @punctuation.definition.tuple.end.bracket.round.python
+("," @punctuation.separator.tuple.comma.python
+  (#is? test.childOfType tuple)
   (#set! capture.final true))
 
-(tuple
-  "," @punctuation.separator.tuple.comma.python
+("{" @punctuation.definition.dictionary.begin.bracket.curly.python
+  (#is? test.childOfType dictionary)
+  (#is? test.first true)
+  (#set! capture.final true))
+("}" @punctuation.definition.dictionary.end.bracket.curly.python
+  (#is? test.childOfType dictionary)
+  (#is? test.last true)
   (#set! capture.final true))
 
-(dictionary
-  "{" @punctuation.definition.dictionary.begin.bracket.curly.python
-  "}" @punctuation.definition.dictionary.end.bracket.curly.python
-  (#set! capture.final true))
-
-(dictionary
-  "," @punctuation.separator.dictionary.comma.python
+("," @punctuation.separator.dictionary.comma.python
+  (#is? test.childOfType dictionary)
   (#set! capture.final true))
 
 ; MISC
