@@ -43,6 +43,17 @@ describe("IPython grammar (Tree-sitter)", () => {
     expect(node.startPosition.row).toBe(2);
   });
 
+  it("exposes module assignments to symbol consumers", async () => {
+    await setUp("doc = factory()\n%pwd\nlater = 2\n");
+    const layer = languageMode.rootLanguageLayer;
+    const captures = layer.queries.tagsQuery.captures(layer.tree.rootNode);
+    const definitions = captures.filter((capture) => capture.name === "definition.constant");
+    expect(definitions.map((capture) => capture.node.text)).toEqual([
+      "doc = factory()",
+      "later = 2",
+    ]);
+  });
+
   it("leaves plain python syntax untouched", async () => {
     await setUp('c = a % b\nd = a != b\nx = f"{v!r}"\n');
     expect(languageMode.tree.rootNode.hasError).toBe(false);
