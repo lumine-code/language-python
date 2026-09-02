@@ -29,7 +29,7 @@
     // `expression_statement` a supertype, so that node no longer appears in
     // the tree and a bare `a, b` becomes `tuple_expression`.
     "parserSource": "github:tree-sitter/tree-sitter-python#26855eabccb19c6abf499fbc5b8dc7cc9ab8bc64",
-    "wasmBuildTool": "tree-sitter-cli#v0.26.13",
+    "wasmBuildTool": "tree-sitter-cli#v0.27.0",
     "grammar": "python.wasm",
     "highlightsQuery": "python-highlights.scm",
     "tagsQuery": "python-tags.scm",
