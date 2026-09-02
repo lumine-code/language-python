@@ -10,7 +10,6 @@ const GRAMMAR_TEST_FILES = [
 
 describe("Grammar tests", () => {
   beforeEach(async () => {
-    lumine.config.set("editor.useTreeSitterParsers", true);
     await lumine.packages.activatePackage("language-python");
   });
 

@@ -2,7 +2,6 @@ describe("Python Tree-sitter punctuation", () => {
   let editor;
 
   beforeEach(async () => {
-    lumine.config.set("editor.useTreeSitterParsers", true);
     await lumine.packages.activatePackage("language-python");
     editor = await lumine.workspace.open("punctuation.py");
     editor.setText(`def function(a, b):

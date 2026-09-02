@@ -14,8 +14,6 @@
   "keywords": [
     "pyi",
     "pyw",
-    "ipython",
-    "snakemake",
     "wsgi",
     "tree-sitter"
   ],
@@ -23,6 +21,9 @@
     "lumine": "^1.0.0",
     "node": ">=24"
   },
+  "specPackages": [
+    "language-log"
+  ],
   "repository": "https://github.com/lumine-code/language-python",
   "license": "MIT",
   "consumedServices": {
