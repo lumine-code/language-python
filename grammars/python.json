@@ -3,7 +3,7 @@
   "scopeName": "source.python",
   "type": "tree-sitter",
   "parser": "tree-sitter-python",
-  "injectionNames": ["py", "python"],
+  "injectionNames": ["py", "py3", "python", "python3"],
   "firstLineRegex": [
     // shebang line
     "^#![ \\t]*/.*\\bpython[\\d\\.]*\\b",
