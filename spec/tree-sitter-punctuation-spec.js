@@ -34,14 +34,12 @@ comprehension = {key: value for key in values}`);
     return editor.scopeDescriptorForBufferPosition([row, column]).getScopesArray();
   }
 
-  function capturesForRows(startRow, endRow) {
-    return languageMode.rootLanguageLayer.queries.highlightsQuery.captures(
-      languageMode.rootLanguageLayer.tree.rootNode,
-      {
-        startPosition: new Point(startRow, 0),
-        endPosition: new Point(endRow, 0),
-      },
-    );
+  async function capturesForRows(startRow, endRow) {
+    const groups = await editor.getGrammarQueryCaptureGroups("highlightsQuery", {
+      startPosition: new Point(startRow, 0),
+      endPosition: new Point(endRow, 0),
+    });
+    return groups.find(({ grammar }) => grammar === editor.getGrammar())?.captures ?? [];
   }
 
   it("scopes the complete container punctuation matrix", () => {
@@ -101,7 +99,7 @@ mapping = {
 }`);
     await languageMode.atTransactionEnd();
 
-    const parameterCaptures = capturesForRows(2, 4);
+    const parameterCaptures = await capturesForRows(2, 4);
     const parameterPunctuation = parameterCaptures.filter(
       (capture) => capture.name.startsWith("punctuation.") && capture.name.includes(".parameters."),
     );
@@ -125,7 +123,7 @@ mapping = {
       ),
     ).toBe(true);
 
-    const argumentCaptures = capturesForRows(6, 8);
+    const argumentCaptures = await capturesForRows(6, 8);
     const argumentPunctuation = argumentCaptures.filter(
       (capture) => capture.name.startsWith("punctuation.") && capture.name.includes(".arguments."),
     );
@@ -149,7 +147,7 @@ mapping = {
       ),
     ).toBe(true);
 
-    const dictionaryCaptures = capturesForRows(11, 13);
+    const dictionaryCaptures = await capturesForRows(11, 13);
     const dictionaryPunctuation = dictionaryCaptures.filter(
       (capture) => capture.name.includes(".dictionary.") || capture.name.includes(".key-value."),
     );

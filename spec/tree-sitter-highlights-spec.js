@@ -64,8 +64,7 @@ describe("Python Tree-sitter highlights", () => {
       .getScopesArray();
   }
 
-  function rawCaptures(startRow, endRow) {
-    const layer = languageMode.rootLanguageLayer;
+  async function rawCaptures(startRow, endRow) {
     const options =
       startRow == null
         ? undefined
@@ -73,7 +72,8 @@ describe("Python Tree-sitter highlights", () => {
             startPosition: new Point(startRow, 0),
             endPosition: new Point(endRow, 0),
           };
-    return layer.queries.highlightsQuery.captures(layer.tree.rootNode, options);
+    const groups = await editor.getGrammarQueryCaptureGroups("highlightsQuery", options);
+    return groups.find(({ grammar }) => grammar === editor.getGrammar())?.captures ?? [];
   }
 
   it("keeps unbounded containers leaf-rooted", () => {
@@ -127,10 +127,11 @@ def ordinary(value):
     expect(scopesAt(9, "ordinary")).toContain("entity.name.function.python");
     expect(scopesAt(10, "ordinary")).toContain("support.other.function.python");
 
-    const legacyCaptures = rawCaptures().filter(
-      (capture) => capture.name === "keyword.other._TEXT_.python" && capture.node.text === "exec",
+    const resolvedCaptures = (await rawCaptures()).filter(
+      (capture) =>
+        capture.name === "support.function.builtin.python" && capture.node.text === "exec",
     );
-    expect(legacyCaptures.map((capture) => capture.node.startPosition.row)).toEqual([5]);
+    expect(resolvedCaptures.map((capture) => capture.node.startPosition.row)).toEqual([5]);
   });
 
   it("keeps raw capture counts bounded for a large CRLF ctypes fixture", async () => {
@@ -139,9 +140,9 @@ def ordinary(value):
     expect(fixture.match(/# generated ctypes field/g).length).toBe(CTYPES_FIXTURE_COMMENT_ROWS);
     await setUp(fixture);
 
-    const fullCaptures = rawCaptures();
-    const viewportCaptures = rawCaptures(3, 76);
-    const tileCaptures = rawCaptures(3, 9);
+    const fullCaptures = await rawCaptures();
+    const viewportCaptures = await rawCaptures(3, 76);
+    const tileCaptures = await rawCaptures(3, 9);
 
     // The renderer never asks for the full file. Leaf-rooted candidates make
     // that diagnostic count larger, but keep tile cost independent of a
@@ -158,7 +159,7 @@ def ordinary(value):
     lines.push("}");
     await setUp(lines.join("\r\n"));
 
-    expect(rawCaptures(3000, 3006).length).toBeLessThanOrEqual(64);
+    expect((await rawCaptures(3000, 3006)).length).toBeLessThanOrEqual(64);
   });
 
   it("keeps escapes local inside a large triple-quoted string", async () => {
@@ -168,7 +169,7 @@ def ordinary(value):
     await setUp(lines.join("\r\n"));
 
     expect(scopesAt(3000, "\\n")).toContain("constant.character.escape.python");
-    const captures = rawCaptures(3000, 3006).filter(
+    const captures = (await rawCaptures(3000, 3006)).filter(
       ({ name }) => name === "constant.character.escape.python",
     );
     expect(captures.length).toBe(6);
