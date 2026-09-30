@@ -35,11 +35,12 @@ comprehension = {key: value for key in values}`);
   }
 
   async function capturesForRows(startRow, endRow) {
-    const groups = await editor.getGrammarQueryCaptureGroups("highlightsQuery", {
+    const capturesQuery = await editor.getGrammar().getQuery("highlightsQuery");
+    const queryRoot = editor.getSyntaxNodeAtBufferPosition([0, 0], (node) => !node.parent);
+    return capturesQuery.captures(queryRoot, {
       startPosition: new Point(startRow, 0),
       endPosition: new Point(endRow, 0),
     });
-    return groups.find(({ grammar }) => grammar === editor.getGrammar())?.captures ?? [];
   }
 
   it("scopes the complete container punctuation matrix", () => {
