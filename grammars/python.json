@@ -27,10 +27,12 @@
     "wsgi"
   ],
   "treeSitter": {
-    // One commit past v0.25.0, and still untagged upstream: it makes
+    // Based on upstream 26855eab, one commit past v0.25.0: it makes
     // `expression_statement` a supertype, so that node no longer appears in
     // the tree and a bare `a, b` becomes `tuple_expression`.
-    "parserSource": "github:tree-sitter/tree-sitter-python#26855eabccb19c6abf499fbc5b8dc7cc9ab8bc64",
+    // The maintained source fork keeps Python syntax unchanged and avoids
+    // repeated scanner lookahead through module-level comment runs.
+    "parserSource": "github:lumine-code/tree-sitter-python#1820ef598ff4d8bd82b843e13ac2959062e53a73",
     "wasmBuildTool": "tree-sitter-cli#v0.27.0",
     "grammar": "python.wasm",
     "highlightsQuery": "python-highlights.scm",
