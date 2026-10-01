@@ -73,7 +73,7 @@
 
 ((identifier) @constant.other.python
   (#match? @constant.other.python "^[A-Z][A-Z_]*$")
-  (#set? final true))
+  (#set! capture.final true))
 
 ; ((identifier) @support.class.python
 ;   (#match? @support.class.python "^[A-Z]"))
