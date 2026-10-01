@@ -36,6 +36,7 @@
     "highlightsQuery": "python-highlights.scm",
     "tagsQuery": "python-tags.scm",
     "foldsQuery": "python-folds.scm",
-    "indentsQuery": "python-indents.scm"
+    "indentsQuery": "python-indents.scm",
+    "injectionsQuery": "python-injections.scm"
   }
 }
