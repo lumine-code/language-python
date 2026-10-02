@@ -206,6 +206,60 @@ sP.A()`);
     expect(scopesAt(7, "A")).not.toContain("constant.other.property.python");
   });
 
+  it("scopes complete type expressions in fields, unions, aliases and signatures", async () => {
+    await setUp(`class Result:
+    point_idxs: IntArray | None
+    coordinates: FloatArray | None
+    displacements_total: FloatArray | None = None
+    families: dict[str, FamilyResult]
+    nested: dict[str, IntArray | FloatArray]
+    metadata: Annotated[FloatArray | None, "array", 1]
+    def convert(self, values: IntArray | None) -> FloatArray | None:
+        local: IntArray | FloatArray = values
+        return values
+type ResultBuffer = IntArray | FloatArray
+combined = left | right`);
+
+    for (const [row, words] of [
+      [1, ["IntArray"]],
+      [2, ["FloatArray"]],
+      [3, ["FloatArray"]],
+      [4, ["str", "FamilyResult"]],
+      [5, ["IntArray", "FloatArray"]],
+      [6, ["FloatArray"]],
+      [7, ["IntArray", "FloatArray"]],
+      [8, ["IntArray", "FloatArray"]],
+      [10, ["IntArray", "FloatArray"]],
+    ]) {
+      for (const word of words) {
+        expect(scopesAt(row, word))
+          .withContext(`${row}/${word}`)
+          .toContain("support.storage.type.python");
+      }
+    }
+    expect(scopesAt(3, "None", 0)).toContain("constant.builtin.none.python");
+    expect(scopesAt(3, "None", 1)).toContain("constant.builtin.none.python");
+    expect(scopesAt(3, "None", 1)).not.toContain("support.storage.type.python");
+    expect(scopesAt(4, "dict")).toContain("support.storage.type.generic.python");
+    expect(scopesAt(6, '"array"')).toContain("string.quoted.double.single-line.python");
+    expect(scopesAt(6, "1")).toContain("constant.numeric.integer.python");
+    expect(scopesAt(7, "values")).toContain("variable.parameter.function.python");
+    for (const [row, word] of [
+      [1, "point_idxs"],
+      [3, "displacements_total"],
+      [7, "values"],
+      [8, "values"],
+      [9, "values"],
+      [11, "left"],
+      [11, "right"],
+    ]) {
+      expect(scopesAt(row, word))
+        .withContext(`${row}/${word}`)
+        .not.toContain("support.storage.type.python");
+    }
+    expect(scopesAt(11, "|")).toContain("keyword.operator.bitwise.python");
+  });
+
   it("keeps raw capture counts bounded for a large CRLF ctypes fixture", async () => {
     const fixture = buildCtypesFixture();
     expect(fixture.split("\r\n").length).toBe(CTYPES_FIXTURE_ROWS);

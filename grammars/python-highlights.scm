@@ -99,7 +99,10 @@
 ; =====
 
 (generic_type (identifier) @support.storage.type.generic.python)
-(type (identifier) @support.storage.type.python)
+; A type may contain an expression such as `IntArray | None`, not just an
+; identifier. Scope the complete annotation in every context; literals and
+; punctuation keep their more specific nested scopes.
+(type) @support.storage.type.python
 
 ; FUNCTIONS
 ; =========
@@ -159,19 +162,6 @@
 
 (function_definition
   name: (identifier) @entity.name.function.python)
-
-
-; Type annotations
-; ----------------
-
-(function_definition
-  (type) @support.storage.type.python)
-
-(typed_parameter
-  (type) @support.storage.type.python)
-
-(typed_default_parameter
-  (type) @support.storage.type.python)
 
 
 ; COMMENTS
