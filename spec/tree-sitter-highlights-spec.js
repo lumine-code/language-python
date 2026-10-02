@@ -135,6 +135,43 @@ def ordinary(value):
     expect(resolvedCaptures.map((capture) => capture.node.startPosition.row)).toEqual([5]);
   });
 
+  it("keeps uppercase attributes distinct from standalone constants", async () => {
+    await setUp(`trd.varsto('popA', sP.A)
+sP.value
+sP.A.B
+sP.A = 1
+A = 1
+consume(A)
+CONST.A
+sP.A()`);
+
+    for (const [row, word] of [
+      [0, "A)"],
+      [2, "A"],
+      [2, "B"],
+      [3, "A"],
+      [6, "A"],
+    ]) {
+      const scopes = scopesAt(row, word);
+      expect(scopes).withContext(`${row}/${word}`).toContain("support.other.property.python");
+      expect(scopes).withContext(`${row}/${word}`).toContain("constant.other.property.python");
+      expect(scopes).withContext(`${row}/${word}`).not.toContain("constant.other.python");
+    }
+    expect(scopesAt(1, "value")).toContain("support.other.property.python");
+    expect(scopesAt(1, "value")).not.toContain("constant.other.property.python");
+    for (const [row, word] of [
+      [4, "A"],
+      [5, "A"],
+      [6, "CONST"],
+    ]) {
+      expect(scopesAt(row, word)).toContain("constant.other.python");
+      expect(scopesAt(row, word)).not.toContain("constant.other.property.python");
+    }
+    expect(scopesAt(7, "A")).toContain("support.other.function.python");
+    expect(scopesAt(7, "A")).not.toContain("constant.other.python");
+    expect(scopesAt(7, "A")).not.toContain("constant.other.property.python");
+  });
+
   it("keeps raw capture counts bounded for a large CRLF ctypes fixture", async () => {
     const fixture = buildCtypesFixture();
     expect(fixture.split("\r\n").length).toBe(CTYPES_FIXTURE_ROWS);

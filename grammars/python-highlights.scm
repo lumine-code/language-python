@@ -71,8 +71,10 @@
 ; CONSTANTS
 ; =======
 
+; Leave attribute names to the property and method rules below, even in ALL_CAPS.
 ((identifier) @constant.other.python
   (#match? @constant.other.python "^[A-Z][A-Z_]*$")
+  (#is-not? test.field attribute)
   (#set! capture.final true))
 
 ; ((identifier) @support.class.python
