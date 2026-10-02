@@ -135,6 +135,40 @@ def ordinary(value):
     expect(resolvedCaptures.map((capture) => capture.node.startPosition.row)).toEqual([5]);
   });
 
+  it("recognizes single-letter and numbered constructor calls", async () => {
+    await setUp(`r1 = R([1, 25e-3, 250e-3])
+r2 = shapes.R([1, 20e-3, 125e-3])
+R2()
+shapes.R2()
+Reinforcement()
+shapes.Reinforcement()
+consume(R)
+shapes.R
+R = 1
+r()`);
+
+    for (const [row, word] of [
+      [0, "R"],
+      [1, "R"],
+      [2, "R2"],
+      [3, "R2"],
+      [4, "Reinforcement"],
+      [5, "Reinforcement"],
+    ]) {
+      const scopes = scopesAt(row, word);
+      expect(scopes).withContext(`${row}/${word}`).toContain("support.type.constructor.python");
+      expect(scopes).withContext(`${row}/${word}`).not.toContain("constant.other.python");
+    }
+    expect(scopesAt(6, "R")).toContain("constant.other.python");
+    expect(scopesAt(7, "R")).toContain("constant.other.property.python");
+    expect(scopesAt(8, "R")).toContain("constant.other.python");
+    for (const row of [6, 7, 8]) {
+      expect(scopesAt(row, "R")).not.toContain("support.type.constructor.python");
+    }
+    expect(scopesAt(9, "r")).toContain("support.other.function.python");
+    expect(scopesAt(9, "r")).not.toContain("support.type.constructor.python");
+  });
+
   it("keeps uppercase attributes distinct from standalone constants", async () => {
     await setUp(`trd.varsto('popA', sP.A)
 sP.value
@@ -167,7 +201,7 @@ sP.A()`);
       expect(scopesAt(row, word)).toContain("constant.other.python");
       expect(scopesAt(row, word)).not.toContain("constant.other.property.python");
     }
-    expect(scopesAt(7, "A")).toContain("support.other.function.python");
+    expect(scopesAt(7, "A")).toContain("support.type.constructor.python");
     expect(scopesAt(7, "A")).not.toContain("constant.other.python");
     expect(scopesAt(7, "A")).not.toContain("constant.other.property.python");
   });

@@ -39,15 +39,17 @@
 ((identifier) @support.variable.magic.python
   (#match? @support.variable.magic.python "^__(all|annotations|bases|class|closure|code|debug|dict|doc|file|func|globals|kwdefaults|members|metaclass|methods|module|name|qualname|self|slots|weakref)__$"))
 
+; Constructor names conventionally start with an uppercase letter. The parser
+; already validates the identifier, including single-letter names like `R`.
 (call
   function: (identifier) @support.type.constructor.python
-  (#match? @support.type.constructor.python "^[A-Z][A-Za-z_]+")
+  (#match? @support.type.constructor.python "^[A-Z]")
   (#set! capture.final true))
 
 (call
   function: (attribute
     attribute: (identifier) @support.type.constructor.python)
-    (#match? @support.type.constructor.python "^[A-Z][A-Za-z_]+")
+    (#match? @support.type.constructor.python "^[A-Z]")
     (#set! capture.final true))
 
 (call
