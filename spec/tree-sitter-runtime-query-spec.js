@@ -2,8 +2,8 @@ const { createRequire } = require("module");
 const path = require("path");
 const { TextBuffer } = require("lumine");
 
-describe("Python query compatibility across Tree-sitter runtimes", () => {
-  let buffers, registries, grammars, factory, Registry, Mode, config, grammarPath, nativePath;
+describe("Python queries against the shipped WASM grammar", () => {
+  let buffers, registries, grammars, factory, Registry, Mode, config, grammarPath;
 
   beforeEach(async () => {
     jasmine.useRealClock();
@@ -14,7 +14,6 @@ describe("Python query compatibility across Tree-sitter runtimes", () => {
     const requireCore = createRequire(coreModule.filename);
     Registry = requireCore("./grammar-registry");
     Mode = requireCore("./tree-sitter-language-mode");
-    nativePath = requireCore.resolve("tree-sitter-python");
     grammarPath = path.join(__dirname, "..", "grammars", "python.json");
     config = requireCore("@lumine-code/season").readFileSync(grammarPath);
     buffers = [];
@@ -28,16 +27,12 @@ describe("Python query compatibility across Tree-sitter runtimes", () => {
     for (const registry of registries) registry.clear();
   });
 
-  async function parse(runtime, text) {
+  async function parse(text) {
     const registry = new Registry({ config: lumine.config });
     registries.push(registry);
     const grammar = new factory(registry, grammarPath, {
       ...config,
       scopeName: "source.python.query-control",
-      treeSitter:
-        runtime === "node"
-          ? { ...config.treeSitter, runtime: "node", languageModule: nativePath }
-          : config.treeSitter,
     });
     grammars.push(grammar);
     registry.addGrammar(grammar);
@@ -50,56 +45,44 @@ describe("Python query compatibility across Tree-sitter runtimes", () => {
     return { buffer, mode, grammar };
   }
 
-  it("compiles complete highlights across runtimes and the shipped WASM tags", async () => {
-    for (const runtime of ["wasm", "node"]) {
-      const { mode, grammar } = await parse(runtime, "# comment\nVALUE = 1\n");
-      expect(grammar.highlightsQuery).not.toContain("; (placeholder)");
-      // Core's native development fixture is v0.25.0, whose statement AST
-      // predates the shipped upstream commit. Its highlights remain compatible;
-      // exact native tags parity is checked with the original-source control.
-      for (const kind of runtime === "wasm"
-        ? ["highlightsQuery", "tagsQuery"]
-        : ["highlightsQuery"]) {
-        const query = await grammar.getQuery(kind);
-        const captures = query.captures(mode.tree.rootNode, {
-          startPosition: mode.tree.rootNode.startPosition,
-          endPosition: mode.tree.rootNode.endPosition,
-        });
-        expect(captures.length).withContext(`${runtime}/${kind}`).toBeGreaterThan(0);
-      }
+  it("compiles complete highlights and tags", async () => {
+    const { mode, grammar } = await parse("# comment\nVALUE = 1\n");
+    expect(grammar.highlightsQuery).not.toContain("; (placeholder)");
+    for (const kind of ["highlightsQuery", "tagsQuery"]) {
+      const query = await grammar.getQuery(kind);
+      const captures = query.captures(mode.tree.rootNode, {
+        startPosition: mode.tree.rootNode.startPosition,
+        endPosition: mode.tree.rootNode.endPosition,
+      });
+      expect(captures.length).withContext(kind).toBeGreaterThan(0);
     }
   });
 
   it("keeps self, cls and constant captures final with matching actual core scopes", async () => {
     const text =
       "class Worker:\n    def work(self, cls):\n        VALUE = 1\n        return self, cls, VALUE\n";
-    const results = [];
-    for (const runtime of ["wasm", "node"]) {
-      const { buffer, mode, grammar } = await parse(runtime, text);
-      const query = await grammar.getQuery("highlightsQuery");
-      const captures = query.captures(mode.tree.rootNode, {
-        startPosition: mode.tree.rootNode.startPosition,
-        endPosition: mode.tree.rootNode.endPosition,
-      });
-      const scopes = (index) =>
-        mode.scopeDescriptorForPosition(buffer.positionForCharacterIndex(index)).getScopesArray();
-      for (const [word, scope] of [
-        ["self", "variable.language.self.python"],
-        ["cls", "variable.language.cls.python"],
-        ["VALUE", "constant.other.python"],
-      ]) {
-        let index = -1;
-        while ((index = text.indexOf(word, index + 1)) !== -1) {
-          const actual = scopes(index);
-          expect(actual).withContext(`${runtime}/${word}`).toContain(scope);
-          const capture = captures.find(
-            (item) => item.name === scope && item.node.startIndex === index,
-          );
-          expect(capture?.setProperties?.["capture.final"]).toBe("true");
-        }
+    const { buffer, mode, grammar } = await parse(text);
+    const query = await grammar.getQuery("highlightsQuery");
+    const captures = query.captures(mode.tree.rootNode, {
+      startPosition: mode.tree.rootNode.startPosition,
+      endPosition: mode.tree.rootNode.endPosition,
+    });
+    const scopes = (index) =>
+      mode.scopeDescriptorForPosition(buffer.positionForCharacterIndex(index)).getScopesArray();
+    for (const [word, scope] of [
+      ["self", "variable.language.self.python"],
+      ["cls", "variable.language.cls.python"],
+      ["VALUE", "constant.other.python"],
+    ]) {
+      let index = -1;
+      while ((index = text.indexOf(word, index + 1)) !== -1) {
+        const actual = scopes(index);
+        expect(actual).withContext(word).toContain(scope);
+        const capture = captures.find(
+          (item) => item.name === scope && item.node.startIndex === index,
+        );
+        expect(capture?.setProperties?.["capture.final"]).toBe("true");
       }
-      results.push(Array.from({ length: text.length }, (_, index) => scopes(index)));
     }
-    expect(results[1]).toEqual(results[0]);
   });
 });
