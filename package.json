@@ -27,6 +27,14 @@
   "bugs": {
     "url": "https://github.com/lumine-code/language-python/issues"
   },
+  "configSchema": {
+    "highlightConstants": {
+      "title": "Highlight Uppercase Constants",
+      "description": "Highlight ALL_CAPS names as constants. When disabled, names use their usual variable or property highlighting.",
+      "type": "boolean",
+      "default": true
+    }
+  },
   "scripts": {
     "test": "lumine --test spec",
     "lint": "eslint . --max-warnings 0",

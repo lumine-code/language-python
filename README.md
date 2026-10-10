@@ -7,7 +7,7 @@ Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/l
 ## Features
 
 - **Grammars**: provides a Tree-sitter grammar built from [tree-sitter-python](https://github.com/tree-sitter/tree-sitter-python).
-- **Syntax highlighting**: full grammar coverage for Python files; the central `language-log` package provides traceback highlighting.
+- **Syntax highlighting**: full grammar coverage for Python files, with optional highlighting of uppercase constants; the central `language-log` package provides traceback highlighting.
 - **Snippets**: shortcuts for common Python constructs.
 
 ## Installation

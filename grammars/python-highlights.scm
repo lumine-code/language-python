@@ -44,12 +44,14 @@
 (call
   function: (identifier) @support.type.constructor.python
   (#match? @support.type.constructor.python "^[A-Z]")
+  (#is-not? test.typeAt "parent.parent decorator")
   (#set! capture.final true))
 
 (call
   function: (attribute
     attribute: (identifier) @support.type.constructor.python)
     (#match? @support.type.constructor.python "^[A-Z]")
+    (#is-not? test.typeAt "parent.parent.parent decorator")
     (#set! capture.final true))
 
 (call
@@ -70,30 +72,20 @@
   (#set! capture.final true))
 
 
-; CONSTANTS
-; =======
-
-; Leave attribute names to the property and method rules below, even in ALL_CAPS.
-((identifier) @constant.other.python
-  (#match? @constant.other.python "^[A-Z][A-Z_]*$")
-  (#is-not? test.field attribute)
-  (#set! capture.final true))
-
-; ((identifier) @support.class.python
-;   (#match? @support.class.python "^[A-Z]"))
-
 ; CLASSES
 ; =======
 
 ; The "class" and "Foo" in `class Foo():`
 (class_definition
   "class" @storage.type.class.python
-  name: (identifier) @entity.name.type.class.python)
+  name: (identifier) @entity.name.type.class.python
+  (#set! python.identifierRole true))
 
 ; The "Bar" in `class Foo(Bar):`
 (class_definition
   superclasses: (argument_list
-    (identifier) @entity.other.inherited-class.python))
+    (identifier) @entity.other.inherited-class.python)
+  (#set! python.identifierRole true))
 
 ; TYPES
 ; =====
@@ -151,17 +143,20 @@
 
 (function_definition
   name: (identifier) @entity.name.function.magic.python
-  (#match? @entity.name.function.magic.python "^__(?:abs|add|and|bool|bytes|call|cmp|coerce|complex|contains|del|delattr|delete|delitem|delslice|dir|div|divmod|enter|eq|exit|float|floordiv|format|ge|get|getattr|getattribute|getitem|getslice|gt|hash|hex|iadd|iand|idiv|ifloordiv|ilshift|imatmul|imod|imul|index|init|instancecheck|int|invert|ior|ipow|irshift|isub|iter|itruediv|ixor|le|len|length_hint|long|lshift|lt|matmul|missing|mod|mul|ne|neg|next|new|nonzero|oct|or|pos|pow|radd|rand|rdiv|rdivmod|repr|reversed|rfloordiv|rlshift|rmatmul|rmod|rmul|ror|round|rpow|rrshift|rshift|rsub|rtruediv|rxor|set|setattr|setitem|setslice|str|sub|subclasscheck|truediv|unicode|xor)__$"))
+  (#match? @entity.name.function.magic.python "^__(?:abs|add|and|bool|bytes|call|cmp|coerce|complex|contains|del|delattr|delete|delitem|delslice|dir|div|divmod|enter|eq|exit|float|floordiv|format|ge|get|getattr|getattribute|getitem|getslice|gt|hash|hex|iadd|iand|idiv|ifloordiv|ilshift|imatmul|imod|imul|index|init|instancecheck|int|invert|ior|ipow|irshift|isub|iter|itruediv|ixor|le|len|length_hint|long|lshift|lt|matmul|missing|mod|mul|ne|neg|next|new|nonzero|oct|or|pos|pow|radd|rand|rdiv|rdivmod|repr|reversed|rfloordiv|rlshift|rmatmul|rmod|rmul|ror|round|rpow|rrshift|rshift|rsub|rtruediv|rxor|set|setattr|setitem|setslice|str|sub|subclasscheck|truediv|unicode|xor)__$")
+  (#set! python.identifierRole true))
 
 (attribute
   attribute: (identifier) @support.other.property.python)
 
 (attribute
   attribute: (identifier) @constant.other.property.python
-    (#match? @constant.other.property.python "^[A-Z][A-Z_]*$"))
+    (#match? @constant.other.property.python "^[A-Z][A-Z_]*$")
+    (#is? test.config "language-python.highlightConstants"))
 
 (function_definition
-  name: (identifier) @entity.name.function.python)
+  name: (identifier) @entity.name.function.python
+  (#set! python.identifierRole true))
 
 
 ; COMMENTS
@@ -177,7 +172,8 @@
 
 ((pair
   key: (identifier) @entity.other.attribute-name.python)
-  (#is? test.typeAt "parent.parent dictionary"))
+  (#is? test.typeAt "parent.parent dictionary")
+  (#set! python.identifierRole true))
 
 ; STRINGS
 ; =======
@@ -300,24 +296,29 @@
 ; =========
 
 ((identifier) @variable.parameter.function.python
-  (#is? test.childOfType parameters))
+  (#is? test.childOfType parameters)
+  (#set! python.identifierRole true))
 
 (default_parameter
   name: (identifier) @variable.parameter.function.python
-  (#is? test.typeAt "parent.parent parameters"))
+  (#is? test.typeAt "parent.parent parameters")
+  (#set! python.identifierRole true))
 
 (list_splat_pattern
   (identifier) @variable.parameter.function.python
-  (#is? test.typeAt "parent.parent parameters"))
+  (#is? test.typeAt "parent.parent parameters typed_parameter")
+  (#set! python.identifierRole true))
 
 (dictionary_splat_pattern
   (identifier) @variable.parameter.function.python
-  (#is? test.typeAt "parent.parent parameters"))
+  (#is? test.typeAt "parent.parent parameters typed_parameter")
+  (#set! python.identifierRole true))
 
 
 ; The "foo" in `except TypeError as foo:`.
 (as_pattern_target
-  (identifier) @variable.other.exception.python)
+  (identifier) @variable.other.exception.python
+  (#set! python.identifierRole true))
 
 ; `self` and `cls` are just conventions, but they are _strong_ conventions.
 ((identifier) @variable.language.self.python
@@ -329,28 +330,55 @@
   (#set! capture.final true))
 
 (keyword_argument
-  name: (identifier) @variable.parameter.function.python)
+  name: (identifier) @variable.parameter.function.python
+  (#set! python.identifierRole true))
 
 (typed_parameter
-  (identifier) @variable.parameter.function.python)
+  (identifier) @variable.parameter.function.python
+  (#set! python.identifierRole true))
 
 (typed_default_parameter
-  (identifier) @variable.parameter.function.python)
+  name: (identifier) @variable.parameter.function.python
+  (#set! python.identifierRole true))
 
 (lambda_parameters
-  (identifier) @variable.parameter.function.lambda.python)
+  (identifier) @variable.parameter.function.lambda.python
+  (#set! python.identifierRole true))
 
 (lambda_parameters
   (default_parameter
-    (identifier) @variable.parameter.function.lambda.python))
+    name: (identifier) @variable.parameter.function.lambda.python)
+  (#set! python.identifierRole true))
 
 (lambda_parameters
   (list_splat_pattern
-    (identifier) @variable.parameter.function.lambda.python))
+    (identifier) @variable.parameter.function.lambda.python)
+  (#set! python.identifierRole true))
 
 (lambda_parameters
   (dictionary_splat_pattern
-    (identifier) @variable.parameter.function.lambda.python))
+    (identifier) @variable.parameter.function.lambda.python)
+  (#set! python.identifierRole true))
+
+; CONSTANTS
+; =========
+
+; Capitalization is a fallback after structural roles, before assignments.
+; Only identifier-role metadata excludes it; a meta scope can share a constant's
+; exact range, for instance the sole argument in `consume(VALUE)`.
+; Types and decorator targets can have enclosing scopes with different ranges;
+; decorator arguments and other expressions still retain their constant scopes.
+((identifier) @constant.other.python
+  (#match? @constant.other.python "^[A-Z][A-Z_]*$")
+  (#is? test.config "language-python.highlightConstants")
+  (#is-not? test.field attribute)
+  (#is-not? test.descendantOfType type)
+  (#is-not? test.ancestorTypeNearerThan "decorator argument_list subscript parenthesized_expression conditional_expression binary_operator boolean_operator unary_operator comparison_operator list tuple dictionary set lambda")
+  (#is-not? test.rangeWithData python.identifierRole)
+  (#set! capture.final true))
+
+; Assignments
+; -----------
 
 (assignment
   left: (identifier) @variable.other.assignment.python)
