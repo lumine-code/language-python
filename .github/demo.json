@@ -1,0 +1,16 @@
+{
+  "title": "language-python",
+  "description": "Python syntax highlighting in the editor.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "9edd4b048426a023372e544a0679d4df0dc006cf",
+  "mode": "normal",
+  "fontSettings": "default",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "Python syntax highlighting at the default editor font size.",
+      "width": 1100,
+      "height": 820
+    }
+  ]
+}

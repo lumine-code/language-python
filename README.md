@@ -10,6 +10,8 @@ Fork of [pulsar-edit/pulsar](https://github.com/pulsar-edit/pulsar) (`packages/l
 - **Syntax highlighting**: full grammar coverage for Python files, with optional highlighting of uppercase constants; the central `language-log` package provides traceback highlighting.
 - **Snippets**: shortcuts for common Python constructs.
 
+![Python syntax highlighting at the default editor font size.](.github/demo.png)
+
 ## Installation
 
 To install `language-python` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/language-python`.
