@@ -1,16 +1,61 @@
 {
   "title": "language-python",
-  "description": "Python syntax highlighting in the editor.",
-  "recordedOn": "2026-10-13",
-  "sourceRevision": "9edd4b048426a023372e544a0679d4df0dc006cf",
+  "description": "Python syntax highlighting at the default editor font size.",
+  "recordedOn": "2026-10-14",
+  "sourceRevision": "41314a0fd1445d4a74e6254e775b3582ad5a8556",
+  "themeSourceRevision": "14a69683b0e3238e2bc128fbfae3866c1e4ee9c6",
   "mode": "normal",
   "fontSettings": "default",
+  "scenario": "demo.js",
+  "recipeHash": "70752ccf1162d75614b0a6191e04deae8cb2b210aeb77c3e3708d4d3a68ab0b7",
+  "environment": {
+    "platform": "win32",
+    "arch": "x64",
+    "electron": "44.7.0",
+    "chrome": "152.0.7977.130",
+    "devicePixelRatio": 1,
+    "locale": "en-GB",
+    "fontFamily": "Fira Code, Menlo, DejaVu Sans Mono, Consolas, monospace",
+    "fontSize": 14,
+    "themes": ["one-day-syntax", "one-day-ui"]
+  },
+  "viewport": { "width": 1100, "height": 820 },
+  "cornerRadius": 10,
+  "sources": {
+    "editor": {
+      "revision": "0362a9fac7d6e153a768c0381800d6f3eb06647a",
+      "dirty": true,
+      "workingTreeHash": "1d75658a8b7d55a69c806a3786c562863bb9d5c71cbf96b3084c6a78c0d648b4"
+    },
+    "package": {
+      "revision": "41314a0fd1445d4a74e6254e775b3582ad5a8556",
+      "dirty": true,
+      "workingTreeHash": "8c4a681064f32fb67545b40e9216d0e4629a81df0705e67521373d21e23ad089"
+    },
+    "language-python": {
+      "revision": "41314a0fd1445d4a74e6254e775b3582ad5a8556",
+      "dirty": true,
+      "workingTreeHash": "8c4a681064f32fb67545b40e9216d0e4629a81df0705e67521373d21e23ad089"
+    },
+    "one-theme": {
+      "revision": "14a69683b0e3238e2bc128fbfae3866c1e4ee9c6",
+      "dirty": true,
+      "workingTreeHash": "50ec2f83a6347dd8113870992ec4eb2be4014f3d9e12213c2f51b543f1eca793"
+    }
+  },
+  "fixtures": [
+    {
+      "file": "example.py",
+      "sha256": "c1a77cb53c5195a0bbea075b2f488e233f64c94e553a1b966442e62c955f58c9"
+    }
+  ],
   "images": [
     {
       "file": "demo.png",
       "label": "Python syntax highlighting at the default editor font size.",
       "width": 1100,
-      "height": 820
+      "height": 820,
+      "sha256": "570ae36c64f05abc1d4401af34164c858b4bbd7009ff0b8db7ea8caf0d6b7dd7"
     }
   ]
 }
