@@ -6,7 +6,8 @@
     "grammars",
     "settings",
     "snippets",
-    "spec"
+    "spec",
+    "THIRD_PARTY_NOTICES"
   ],
   "description": "Python language support.",
   "keywords": [
