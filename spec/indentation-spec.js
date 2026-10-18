@@ -8,6 +8,7 @@ describe("Python indentation (Tree-sitter)", () => {
   async function insertNewline() {
     editor.getLastSelection().insertText("\n", { autoIndent: true, autoIndentNewline: true });
     await languageMode.atTransactionEnd();
+    if (editor.autoIndentAtTransactionEndPromise) await editor.autoIndentAtTransactionEndPromise;
   }
 
   async function expectToAutoIndentAfter(text, assert = true) {
@@ -15,7 +16,7 @@ describe("Python indentation (Tree-sitter)", () => {
     await languageMode.atTransactionEnd();
     editor.setCursorBufferPosition([Infinity, Infinity]);
     let currentRow = editor.getLastCursor().getBufferPosition().row;
-    insertNewline();
+    await insertNewline();
     if (assert) {
       expect(editor.lineTextForBufferRow(currentRow + 1)).toEqual("    ");
     } else {
