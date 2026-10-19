@@ -1,4 +1,48 @@
 
+; REINDENT EXISTING STRUCTURE
+; ==========================
+; A previous statement's indentation cannot identify the end of a Python
+; block. During explicit reindent, retain the structure already parsed. These
+; rules deliberately do not run while typing, pasting, or inserting Enter.
+((string) @preserve
+  (#is? indent.reindent true)
+  (#is-not? indent.matchesCurrentRow startPosition)
+  (#set! indent.force true))
+
+((comment) @preserve
+  (#is? indent.reindent true)
+  (#is? indent.matchesCurrentRow startPosition)
+  (#set! indent.force true))
+
+((_) @none
+  (#is? test.typeAt "parent module")
+  (#is-not? test.typeAt "self comment ERROR line_continuation")
+  (#is? indent.reindent true)
+  (#is? indent.matchesCurrentRow startPosition)
+  (#set! indent.force true))
+
+((_) @match
+  (#is? test.typeAt "parent block")
+  (#is-not? test.typeAt "self comment ERROR line_continuation")
+  (#is? indent.reindent true)
+  (#is? indent.matchesCurrentRow startPosition)
+  (#set! indent.match parent.parent.startPosition)
+  (#set! indent.offset 1)
+  (#set! indent.force true))
+
+([(elif_clause) (else_clause) (except_clause) (finally_clause)] @match
+  (#is? indent.reindent true)
+  (#is? indent.matchesCurrentRow startPosition)
+  (#set! indent.match parent.startPosition)
+  (#set! indent.force true))
+
+((case_clause) @match
+  (#is? indent.reindent true)
+  (#is? indent.matchesCurrentRow startPosition)
+  (#set! indent.match parent.parent.startPosition)
+  (#set! indent.offset 1)
+  (#set! indent.force true))
+
 ; IGNORE NON-BLOCK-STARTING COLONS
 ; ================================
 

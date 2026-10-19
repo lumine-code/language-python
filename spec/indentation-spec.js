@@ -33,6 +33,57 @@ describe("Python indentation (Tree-sitter)", () => {
     await languageMode.ready;
   });
 
+  it("preserves parsed block boundaries when reindenting an existing module", async () => {
+    editor.update({ tabLength: 4, softTabs: true });
+    const source =
+      "def first():\n    values = [\n1,\n2\n]\n    return values\ndef second():\n    return 2\nresult = second()\n";
+    editor.setText(source);
+    await editor.whenGrammarSettled();
+    editor.getBuffer().clearUndoStack();
+    const expected =
+      "def first():\n    values = [\n        1,\n        2\n    ]\n    return values\ndef second():\n    return 2\nresult = second()\n";
+    editor.autoIndentBufferRows(0, editor.getLastBufferRow());
+    await editor.whenGrammarSettled();
+    expect(editor.getText()).toBe(expected);
+    editor.autoIndentBufferRows(0, editor.getLastBufferRow());
+    expect(editor.getText()).toBe(expected);
+    editor.undo();
+    expect(editor.getText()).toBe(source);
+  });
+
+  it("keeps clauses, nested definitions and match cases at their parsed levels", async () => {
+    editor.update({ tabLength: 4, softTabs: true });
+    const source =
+      "def outer():\n    def inner():\n        return 1\n    if True:\n        pass\n    elif False:\n        pass\n    else:\n        pass\n    try:\n        pass\n    except ValueError:\n        pass\n    finally:\n        pass\n    match inner():\n        case 1:\n            pass\n        case _:\n            pass\n    return inner\nresult = outer()\n";
+    editor.setText(source);
+    await editor.whenGrammarSettled();
+    editor.autoIndentBufferRows(0, editor.getLastBufferRow());
+    await editor.whenGrammarSettled();
+    expect(editor.getText()).toBe(source);
+  });
+
+  it("preserves literal string contents and comment alignment during reindent", async () => {
+    editor.update({ tabLength: 4, softTabs: true });
+    const source =
+      'def first():\n    value = """first\n\tkeep this tab\n  keep these spaces\n"""\n    return value\n# next function\ndef second():\n    # an aligned comment\n    return 2\n';
+    editor.setText(source);
+    await editor.whenGrammarSettled();
+    editor.selectAll();
+    editor.autoIndentSelectedRows();
+    await editor.whenGrammarSettled();
+    expect(editor.getText()).toBe(source);
+  });
+
+  it("keeps module statements at column zero when an earlier comment is indented", async () => {
+    const source =
+      "    # intentionally aligned\ndef first():\n    return 1\ndef second():\n    return 2\n";
+    editor.update({ tabLength: 4, softTabs: true });
+    editor.setText(source);
+    await editor.whenGrammarSettled();
+    editor.autoIndentBufferRows(1, editor.getLastBufferRow() - 1);
+    expect(editor.getText()).toBe(source);
+  });
+
   it("indents blocks properly", async () => {
     await expectToAutoIndentAfter(`if 1 > 2:`);
     await expectToAutoIndentAfter(`if 1 > 2: # test`);
