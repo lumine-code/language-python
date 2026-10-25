@@ -62,6 +62,11 @@
 ; …and type annotations on function parameters/class members.
 (":" @_IGNORE_ . (type) (#set! capture.final))
 
+; A format specifier inside an f-string starts with a colon too, including
+; nested replacement fields. It does not start a Python suite.
+(format_specifier ":" @_IGNORE_
+  (#set! capture.final))
+
 ; IGNORE BLOCK-STARTING COLONS BEFORE ONE-LINERS
 ; ==============================================
 

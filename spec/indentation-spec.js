@@ -205,6 +205,11 @@ describe("Python indentation (Tree-sitter)", () => {
     await expectToAutoIndentAfter(`x = lambda a : a + 10`, false);
     await expectToAutoIndentAfter(`x = list[:2]`, false);
     await expectToAutoIndentAfter(`x = { foo: 2 }`, false);
+    await expectToAutoIndentAfter(`x = f'{value:.3f}'`, false);
+    await expectToAutoIndentAfter(`x = rf'{value:,3:m}'`, false);
+    await expectToAutoIndentAfter(`x = f'{value:{width}.{precision}f}'`, false);
+    await expectToAutoIndentAfter(`x = fr'{value!r:>20}'`, false);
+    await expectToAutoIndentAfter(`if f'{value:.3f}':`);
   });
 
   it("indents braces properly", async () => {
