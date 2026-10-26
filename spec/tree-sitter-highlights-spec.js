@@ -8,6 +8,20 @@ const CTYPES_FIXTURE_ROWS = 12462;
 const CTYPES_FIXTURE_COMMENT_ROWS = 9163;
 const CTYPES_FIELDS_PER_CLASS = 96;
 
+function expectRawCaptureBudget(captures, scopeLimit, stringCount) {
+  const prefixes = captures.filter(({ name }) => name === "_IGNORE_.stringStart");
+  // Native classification now inspects one tiny opening token per string.
+  // Account for that exact cost while retaining the previous scope limits.
+  expect(prefixes.length).toBe(stringCount);
+  expect(new Set(prefixes.map(({ node }) => node.id)).size).toBe(stringCount);
+  expect(
+    prefixes.every(
+      ({ node }) => node.type === "string_start" && node.endIndex - node.startIndex === 1,
+    ),
+  ).toBe(true);
+  expect(captures.length - prefixes.length).toBeLessThanOrEqual(scopeLimit);
+}
+
 function buildCtypesFixture() {
   const lines = ["from ctypes import Structure, c_int"];
   let fieldIndex = 0;
@@ -86,6 +100,8 @@ describe("Python Tree-sitter highlights", () => {
     expect(querySource).toContain("(#is? test.childOfType dictionary)");
     expect(querySource).not.toContain("(string_content (escape_sequence)");
     expect(querySource).toContain("(#is? test.childOfType string_content)");
+    expect(querySource).not.toMatch(/#match\? @string\.quoted/);
+    expect(querySource).toContain("(string . (string_start) @_IGNORE_.stringStart)");
   });
 
   it("keeps string delimiters, prefixes, interpolations, and incomplete strings scoped", async () => {
@@ -104,6 +120,27 @@ unfinished = """value`);
     expect(scopesAt(2, "}")).toContain("punctuation.section.embedded.end.python");
     expect(scopesAt(2, '"""', 1)).toContain("punctuation.definition.string.end.python");
     expect(scopesAt(3, '"""')).toContain("punctuation.definition.string.begin.python");
+  });
+
+  it("classifies large string bodies from their opening token", async () => {
+    const cases = [
+      ['"', "double.single-line"],
+      ['b"', "double.single-line"],
+      ['f"', "double.single-line.format"],
+      ["'", "single.single-line"],
+      ["u'", "single.single-line"],
+      ["fr'", "single.single-line.format"],
+      ['"""', "triple.block"],
+      ['r"""', "triple.block.format"],
+      ['f"""', "triple.block.format"],
+    ];
+    const body = "x".repeat(70000);
+    await setUp(
+      cases.map(([start]) => `value = ${start}${body}${start.replace(/^[a-z]+/, "")}`).join("\n"),
+    );
+    for (let row = 0; row < cases.length; row++) {
+      expect(scopesAt(row, "x")).toContain(`string.quoted.${cases[row][1]}.python`);
+    }
   });
 
   it("restricts special function scopes to callees and names", async () => {
@@ -274,9 +311,9 @@ combined = left | right`);
     // that diagnostic count larger, but keep tile cost independent of a
     // collection that began thousands of rows before the viewport.
     expect(fullCaptures.length).toBeGreaterThan(CTYPES_FIXTURE_ROWS);
-    expect(fullCaptures.length).toBeLessThanOrEqual(220000);
-    expect(viewportCaptures.length).toBeLessThanOrEqual(1650);
-    expect(tileCaptures.length).toBeLessThanOrEqual(140);
+    expectRawCaptureBudget(fullCaptures, 220000, CTYPES_FIXTURE_COMMENT_ROWS);
+    expectRawCaptureBudget(viewportCaptures, 1650, 73);
+    expectRawCaptureBudget(tileCaptures, 140, 6);
   });
 
   it("keeps tile query work bounded inside a large dictionary parent", async () => {
@@ -285,7 +322,7 @@ combined = left | right`);
     lines.push("}");
     await setUp(lines.join("\r\n"));
 
-    expect((await rawCaptures(3000, 3006)).length).toBeLessThanOrEqual(64);
+    expectRawCaptureBudget(await rawCaptures(3000, 3006), 64, 6);
   });
 
   it("keeps escapes local inside a large triple-quoted string", async () => {

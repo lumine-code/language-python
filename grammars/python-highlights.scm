@@ -186,27 +186,31 @@
 ; All format strings can be optionally raw, so we need to treat `f` and `fr`
 ; similarly here. No need to account for the rawness of a string in the scope
 ; name unless someone requests that feature.
+; Inspect the small string_start child: the body can span an entire file.
+; Emit the delimiter before a format match marks the same range final.
 
-((string) @string.quoted.triple.block.format.python
-  (#match? @string.quoted.triple.block.format.python "^[fFtTrR]+\"\"\"")
+(string_start) @punctuation.definition.string.begin.python
+
+((string . (string_start) @_IGNORE_.stringStart) @string.quoted.triple.block.format.python
+  (#match? @_IGNORE_.stringStart "^[fFtTrR]+\"\"\"")
   (#set! capture.final))
 
-((string) @string.quoted.triple.block.python
-  (#match? @string.quoted.triple.block.python "^[bBrRuU]*\"\"\""))
+((string . (string_start) @_IGNORE_.stringStart) @string.quoted.triple.block.python
+  (#match? @_IGNORE_.stringStart "^[bBrRuU]*\"\"\""))
 
-((string) @string.quoted.double.single-line.format.python
-  (#match? @string.quoted.double.single-line.format.python "^[fFtTrR]+\"")
+((string . (string_start) @_IGNORE_.stringStart) @string.quoted.double.single-line.format.python
+  (#match? @_IGNORE_.stringStart "^[fFtTrR]+\"")
   (#set! capture.final))
 
-((string) @string.quoted.double.single-line.python
-  (#match? @string.quoted.double.single-line.python "^[bBrRuU]*\"(?!\")"))
+((string . (string_start) @_IGNORE_.stringStart) @string.quoted.double.single-line.python
+  (#match? @_IGNORE_.stringStart "^[bBrRuU]*\"(?!\")"))
 
-((string) @string.quoted.single.single-line.format.python
-  (#match? @string.quoted.single.single-line.format.python "^[fFtTrR]+?\'")
+((string . (string_start) @_IGNORE_.stringStart) @string.quoted.single.single-line.format.python
+  (#match? @_IGNORE_.stringStart "^[fFtTrR]+?\'")
   (#set! capture.final))
 
-((string) @string.quoted.single.single-line.python
-  (#match? @string.quoted.single.single-line.python "^[bBrRuU]*\'"))
+((string . (string_start) @_IGNORE_.stringStart) @string.quoted.single.single-line.python
+  (#match? @_IGNORE_.stringStart "^[bBrRuU]*\'"))
 
 ((escape_sequence) @constant.character.escape.python
   (#is? test.childOfType string_content))
@@ -214,8 +218,6 @@
 (interpolation
   "{" @punctuation.section.embedded.begin.python
   "}" @punctuation.section.embedded.end.python) @meta.embedded.line.interpolation.python
-
-(string_start) @punctuation.definition.string.begin.python
 
 (string_end) @punctuation.definition.string.end.python
 
