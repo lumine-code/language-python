@@ -43,30 +43,6 @@
   (#set! indent.offset 1)
   (#set! indent.force true))
 
-; IGNORE NON-BLOCK-STARTING COLONS
-; ================================
-
-; First, exclude dictionary key/value separators…
-(dictionary
-  (pair ":" @_IGNORE_
-  (#set! capture.final)))
-
-; …lambda functions…
-((lambda ":" @_IGNORE_)
-  (#set! capture.final))
-
-; …list subscript syntax…
-(slice ":" @_IGNORE_
-  (#set! capture.final))
-
-; …and type annotations on function parameters/class members.
-(":" @_IGNORE_ . (type) (#set! capture.final))
-
-; A format specifier inside an f-string starts with a colon too, including
-; nested replacement fields. It does not start a Python suite.
-(format_specifier ":" @_IGNORE_
-  (#set! capture.final))
-
 ; IGNORE BLOCK-STARTING COLONS BEFORE ONE-LINERS
 ; ==============================================
 
@@ -166,6 +142,24 @@
   (#set! capture.final)
 )
 
+(with_statement
+  ":" @_IGNORE_
+  .
+  (block)
+  (#is-not? test.lastTextOnRow)
+  (#is? test.startsOnSameRowAs "nextSibling.endPosition")
+  (#set! capture.final)
+)
+
+(finally_clause
+  ":" @_IGNORE_
+  .
+  (block)
+  (#is-not? test.lastTextOnRow)
+  (#is? test.startsOnSameRowAs "nextSibling.endPosition")
+  (#set! capture.final)
+)
+
 ; Special case for try/except statements, since they don't seem to be valid
 ; until they're fully intact. If we don't do this, `except` doesn't dedent.
 ;
@@ -177,7 +171,7 @@
   ":" @indent
   (block
     (identifier) @dedent
-    (#match? @dedent "except")
+    (#eq? @dedent "except")
   )
 )
 
@@ -200,37 +194,18 @@
 )
 
 
-; REMAINING COLONS
-; ================
-
-; Now that we've done this work, all other colons we encounter hint at upcoming
-; indents.
-;
-; TODO: Based on the stuff we're doing above, it's arguable that the
-; exclude-all-counterexamples approach is no longer useful and we should
-; instead be opting into indentation. Revisit this!
-":" @indent
+; Only a recognized suite header may indent. Incomplete annotations, slices,
+; dictionaries and malformed expressions are ambiguous and keep their level.
+((":" @indent)
+  (#is? test.childOfType "if_statement elif_clause else_clause match_statement case_clause while_statement for_statement try_statement except_clause finally_clause with_statement function_definition class_definition"))
 
 ; MISCELLANEOUS
 ; =============
 
-; When typing out "else" after an "if" statement, tree-sitter-python won't
-; acknowledge it as an `else` statement until it's indented properly, which is
-; quite the dilemma for us. Before that happens, it's an identifier named
-; "else". This has a chance of spuriously dedenting if you're typing out a
-; variable called `elsewhere` or something, but I'm OK with that.
-;
-; This also means that we _should not_ mark an actual `else` keyword with
-; `@dedent`, because if it's recognized as such, that's a sign that it's
-; already indented correctly and we shouldn't touch it.
-;
-; All this also applies to `elif`.
+; Exact branch keywords can be recovered before the parser recognizes a clause.
+; Never match a prefix of an ordinary identifier such as `elsewhere`.
 ((identifier) @dedent (#match? @dedent "^(elif|else)$"))
 
-; As of tree-sitter-python 0.25, a mis-indented `elif`/`else` (before it's
-; recognized as a proper clause) parses as an `ERROR` node rather than an
-; identifier, so we match that case too. The same spurious-dedent caveat as
-; above applies (e.g. while typing `elsewhere`), which we're OK with.
 ((ERROR) @dedent (#match? @dedent "^(elif|else)$"))
 
 ; Likewise, typing `case` at the beginning of a line within a match block — in
