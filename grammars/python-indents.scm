@@ -1,3 +1,8 @@
+; A recovered string opener marks literal text, even if error recovery exposes
+; its punctuation as ordinary tokens. Keep the level while the quote is open.
+(ERROR (string_start) @match.next
+  (#set! indent.match startPosition))
+
 
 ; REINDENT EXISTING STRUCTURE
 ; ==========================

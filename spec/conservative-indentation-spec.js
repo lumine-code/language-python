@@ -12,6 +12,10 @@ describe("Conservative python indentation", () => {
   afterEach(() => editor?.destroy());
 
   for (const [name, source, row, columns] of [
+    ["an unfinished quoted brace", 'value = "{', 0, 0],
+    ["a quote followed by text", 'value = "hello {', 0, 0],
+    ["a closed string before a real opener", 'value = "ok"; values = [', 0, 4],
+    ["a clear unfinished container", "values = [", 0, 4],
     ["an unknown colon", "value:", 0, 0],
     ["a dictionary separator", 'value = {"key":', 0, 4],
     ["an unfinished annotation", "value: Type", 0, 0],
