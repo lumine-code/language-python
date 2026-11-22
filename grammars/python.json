@@ -35,6 +35,7 @@
     "grammar": "python.wasm",
     "highlightsQuery": "python-highlights.scm",
     "tagsQuery": "python-tags.scm",
+    "tagsQuerySupportsLocalPath": true,
     "foldsQuery": "python-folds.scm",
     "indentsQuery": "python-indents.scm",
     "injectionsQuery": "python-injections.scm"
